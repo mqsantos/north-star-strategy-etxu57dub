@@ -24,10 +24,10 @@ const App = () => (
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/matrix" element={<XMatrix />} />
-            <Route path="/objectives" element={<Objectives />} />
+            <Route path="/plan" element={<Objectives />} />
+            <Route path="/okrs" element={<KPIHierarchy />} />
             <Route path="/pdca" element={<PDCATracker />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/kpis" element={<KPIHierarchy />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

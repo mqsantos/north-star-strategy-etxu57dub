@@ -1,225 +1,338 @@
-import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { getObjectives, getActivities, getTasks, getKpis } from '@/services/api'
-import { useRealtime } from '@/hooks/use-realtime'
-import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts'
-import { ArrowUpRight, CheckCircle2, Clock, AlertCircle } from 'lucide-react'
+import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts'
+import { BarChart3, Settings2, History, Network } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { formatDistanceToNow } from 'date-fns'
 
-const data = [
-  { value: 60 },
-  { value: 62 },
-  { value: 58 },
-  { value: 65 },
-  { value: 64 },
-  { value: 70 },
-  { value: 72 },
-  { value: 68 },
-  { value: 75 },
-  { value: 78 },
-  { value: 84.2 },
+const chartData = [
+  { month: 'Sep 23', actual: 85, plan: 82 },
+  { month: 'Oct 23', actual: 88, plan: 84 },
+  { month: 'Nov 23', actual: 84, plan: 86 },
+  { month: 'Dec 23', actual: 92, plan: 89 },
+  { month: 'Jan 24', actual: 95, plan: 91 },
+  { month: 'Feb 24', actual: 102, plan: 94 },
+  { month: 'Mar 24', actual: 108, plan: 96 },
+  { month: 'Apr 24', actual: 105, plan: 99 },
+  { month: 'May 24', actual: 112, plan: 102 },
+  { month: 'Jun 24', actual: 125, plan: 105 },
+  { month: 'Jul 24', actual: 135, plan: 109 },
+  { month: 'Sep 24', actual: 142, plan: 112 },
+]
+
+function CircularProgress({ value }: { value: number }) {
+  const radius = 64
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (value / 100) * circumference
+
+  return (
+    <div className="relative flex items-center justify-center w-56 h-56">
+      <svg className="w-full h-full transform -rotate-90">
+        <circle
+          cx="112"
+          cy="112"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="8"
+          fill="transparent"
+          className="text-secondary"
+        />
+        <circle
+          cx="112"
+          cy="112"
+          r={radius}
+          stroke="currentColor"
+          strokeWidth="8"
+          fill="transparent"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          className="text-primary transition-all duration-1000 ease-out"
+        />
+      </svg>
+      <div className="absolute flex flex-col items-center justify-center">
+        <span className="text-5xl font-light font-editorial text-primary">{value}%</span>
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+          Overall Index
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const metrics = [
+  {
+    title: 'Net Revenue Retention',
+    value: '104.2%',
+    target: '102.0%',
+    var: '+2.2% Var',
+    status: 'On Track',
+    progress: 92,
+    trend: [20, 25, 22, 30, 28, 35, 45, 40, 50, 48, 60],
+  },
+  {
+    title: 'MQL Conversion',
+    value: '18.5%',
+    target: '22.0%',
+    var: '-3.5% Var',
+    status: 'Watch',
+    progress: 64,
+    trend: [50, 48, 45, 40, 35, 32, 30, 35, 38, 36, 35],
+  },
+  {
+    title: 'OpEx Ratio',
+    value: '0.42',
+    target: '0.35',
+    var: '+0.07 Var',
+    status: 'At Risk',
+    progress: 112,
+    trend: [20, 22, 25, 28, 25, 30, 35, 38, 35, 42, 45],
+  },
 ]
 
 export default function Dashboard() {
-  const [objectives, setObjectives] = useState<any[]>([])
-  const [activities, setActivities] = useState<any[]>([])
-  const [tasks, setTasks] = useState<any[]>([])
-
-  const loadData = async () => {
-    const [objRes, actRes, taskRes] = await Promise.all([
-      getObjectives(),
-      getActivities(),
-      getTasks(),
-    ])
-    setObjectives(objRes.filter((o) => o.type === 'breakthrough').slice(0, 2))
-    setActivities(actRes)
-    setTasks(taskRes.filter((t) => t.stage !== 'completed').slice(0, 3))
-  }
-
-  useEffect(() => {
-    loadData()
-  }, [])
-  useRealtime('activities', loadData)
-  useRealtime('pdca_tasks', loadData)
-  useRealtime('objectives', loadData)
-
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-      <div className="xl:col-span-2 space-y-8">
-        {/* Hero Section */}
-        <Card className="p-10 border-border/50 shadow-elevation bg-gradient-to-br from-card to-secondary/20 relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase mb-4">
-              Primary Strategic Indicator
-            </p>
-            <div className="flex items-end justify-between">
-              <div>
-                <h1 className="text-5xl md:text-7xl font-editorial font-medium text-primary tracking-tight leading-tight">
-                  Market
-                  <br />
-                  Penetration Index
-                </h1>
-              </div>
-              <div className="text-right">
-                <div className="text-5xl font-light text-accent">84.2%</div>
-                <div className="flex items-center justify-end text-sm text-muted-foreground mt-2 gap-1">
-                  <ArrowUpRight className="h-4 w-4 text-accent" />
-                  <span>+2.4% vs prev. cycle</span>
-                </div>
+    <div className="space-y-6">
+      {/* SDI Card */}
+      <Card className="p-8 border-none shadow-sm flex flex-col md:flex-row items-center gap-12 bg-white">
+        <CircularProgress value={82} />
+        <div className="flex-1 py-4">
+          <h3 className="text-2xl font-editorial mb-4">Strategy Deployment Index (SDI)</h3>
+          <p className="text-muted-foreground leading-relaxed mb-8 text-[15px]">
+            Organizational health remains robust. We've seen a{' '}
+            <strong className="text-foreground font-semibold">+4.2% lift</strong> since Q2,
+            primarily driven by accelerated delivery in the "Customer Core" pillar. Variance in
+            operational overhead is being managed through the new PDCA cycle initiated in July.
+          </p>
+          <div className="grid grid-cols-3 gap-8">
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1 font-bold">
+                Last Quarter
+              </p>
+              <p className="text-2xl font-light">78.6%</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1 font-bold">
+                Forecasted Q4
+              </p>
+              <p className="text-2xl font-light">85.0%</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1 font-bold">
+                Critical Bottlenecks
+              </p>
+              <p className="text-2xl font-light text-destructive">2 Items</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Metric Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {metrics.map((m, i) => (
+          <Card key={i} className="p-6 border-none shadow-sm bg-white flex flex-col">
+            <div className="flex justify-between items-start mb-4">
+              <h4 className="text-[17px] font-editorial">{m.title}</h4>
+              <span
+                className={`text-[10px] px-2 py-0.5 rounded-[3px] font-bold tracking-wider uppercase ${
+                  m.status === 'On Track'
+                    ? 'bg-[#EAF2EA] text-[#3E5C3E]'
+                    : m.status === 'Watch'
+                      ? 'bg-[#FFF8E6] text-[#A07A40]'
+                      : 'bg-[#FFF0F0] text-[#A04040]'
+                }`}
+              >
+                {m.status}
+              </span>
+            </div>
+            <div className="flex items-end gap-3 mb-6">
+              <span className="text-4xl font-light">{m.value}</span>
+              <div className="mb-1">
+                <p className="text-[10px] text-muted-foreground">Target: {m.target}</p>
+                <p
+                  className={`text-[10px] font-bold ${m.status === 'At Risk' ? 'text-destructive' : m.status === 'Watch' ? 'text-[#A07A40]' : 'text-[#3E5C3E]'}`}
+                >
+                  {m.var}
+                </p>
               </div>
             </div>
 
-            <div className="h-32 mt-8 -ml-4">
+            <div className="h-16 mb-6 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                  <YAxis domain={['dataMin - 10', 'dataMax + 10']} hide />
+                <LineChart data={m.trend.map((v, idx) => ({ value: v, index: idx }))}>
                   <Line
                     type="monotone"
                     dataKey="value"
-                    stroke="hsl(var(--accent))"
+                    stroke={
+                      m.status === 'On Track'
+                        ? '#7A8F7A'
+                        : m.status === 'Watch'
+                          ? '#C2A370'
+                          : '#A04040'
+                    }
+                    strokeWidth={2.5}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-auto">
+              <div className="flex justify-between text-[10px] text-muted-foreground mb-2 font-bold tracking-widest uppercase">
+                <span>Q3 Progress</span>
+                <span>{m.progress}%</span>
+              </div>
+              <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+                <div
+                  className="h-full"
+                  style={{
+                    width: `${Math.min(m.progress, 100)}%`,
+                    backgroundColor:
+                      m.status === 'On Track'
+                        ? '#7A8F7A'
+                        : m.status === 'Watch'
+                          ? '#C2A370'
+                          : '#A04040',
+                  }}
+                />
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Deep Dive Section */}
+      <Card className="border-none shadow-sm bg-white overflow-hidden mt-2">
+        <div className="px-8 py-5 border-b border-border flex justify-between items-center bg-[#FAFAFA]">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary text-primary-foreground p-1.5 rounded-[3px]">
+              <BarChart3 className="h-4 w-4" />
+            </div>
+            <h3 className="text-lg font-editorial">Deep Dive: Net Revenue Retention (NRR)</h3>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-[10px] font-bold tracking-widest uppercase h-8 rounded-sm bg-white"
+            >
+              Export PDF
+            </Button>
+            <Button
+              size="sm"
+              className="bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase h-8 rounded-sm hover:bg-primary/90"
+            >
+              Edit Parameters
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row">
+          <div className="flex-1 p-8 border-r border-border">
+            <div className="flex items-center gap-8 mb-12 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 font-medium">
+                <div className="w-2.5 h-2.5 rounded-full bg-primary" /> Actual Performance
+              </div>
+              <div className="flex items-center gap-2 font-medium">
+                <div className="w-4 h-0.5 border-t-[2.5px] border-dashed border-muted-foreground/60" />{' '}
+                Strategic Plan
+              </div>
+              <div className="ml-auto text-[11px] font-bold tracking-widest uppercase flex items-center gap-1.5 cursor-pointer">
+                Last 12 Months <span className="text-[8px] mt-0.5">▼</span>
+              </div>
+            </div>
+            <div className="h-[280px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
+                  <XAxis
+                    dataKey="month"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 10, fill: '#888', fontWeight: 500 }}
+                    dy={15}
+                  />
+                  <YAxis hide domain={['dataMin - 10', 'dataMax + 10']} />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '4px',
+                      border: '1px solid #E5E7EB',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                      fontSize: '12px',
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="actual"
+                    stroke="hsl(var(--primary))"
                     strokeWidth={3}
                     dot={false}
-                    isAnimationActive={true}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="plan"
+                    stroke="#9ca3af"
+                    strokeWidth={2}
+                    strokeDasharray="4 4"
+                    dot={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
-        </Card>
 
-        {/* Objectives */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {objectives.map((obj) => (
-            <Card
-              key={obj.id}
-              className="p-6 shadow-sm hover:shadow-md transition-shadow group cursor-pointer border-border/50"
-            >
-              <div className="flex justify-between items-start mb-6">
-                <span
-                  className={`text-xs px-2.5 py-1 rounded-sm font-medium ${obj.status === 'on_track' ? 'status-success' : 'status-error'}`}
-                >
-                  {obj.status === 'on_track' ? 'On Track' : 'At Risk'}
-                </span>
-                <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <h3 className="text-xl font-editorial font-medium mb-3">{obj.title}</h3>
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-8 min-h-[40px]">
-                {obj.description}
-              </p>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Completion</span>
-                  <span>{obj.progress}%</span>
-                </div>
-                <Progress
-                  value={obj.progress}
-                  className={`h-1 ${obj.status === 'at_risk' ? '[&>div]:bg-destructive' : '[&>div]:bg-accent'}`}
-                />
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Alignment Map */}
-        <Card className="p-8 border-border/50 shadow-sm">
-          <h3 className="text-xl font-editorial font-medium mb-8">Strategic Alignment Map</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {['Financial', 'Customer', 'Internal', 'Learning'].map((pillar, i) => (
-              <div key={pillar} className="space-y-4">
-                <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-                  {pillar}
+          <div className="w-full lg:w-[380px] p-8 bg-[#FAFAFA]">
+            <h4 className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-6">
+              Owner's Commentary
+            </h4>
+            <div className="flex gap-4 mb-10">
+              <Avatar className="h-10 w-10 border border-border shadow-sm">
+                <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=female&seed=12" />
+                <AvatarFallback>SC</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-bold text-foreground">Sarah Chen</p>
+                <p className="text-[13px] text-muted-foreground italic mt-2 leading-relaxed font-serif">
+                  "Retention is exceeding plan due to the high adoption of our 'Enterprise Catalyst'
+                  module. Churn is concentrated in the SME tier, which we are addressing via
+                  automated lifecycle touchpoints."
                 </p>
-                <div>
-                  <p className="text-xl font-medium">
-                    {i === 0 ? '92%' : i === 1 ? '74' : i === 2 ? '14d' : '12.5%'}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {i === 0
-                      ? 'Net Margin'
-                      : i === 1
-                        ? 'NPS Score'
-                        : i === 2
-                          ? 'Cycle Time'
-                          : 'R&D Ratio'}
-                  </p>
-                </div>
-                <div
-                  className={`h-0.5 w-full ${i === 0 || i === 2 ? 'bg-primary' : 'bg-accent'}`}
-                />
               </div>
-            ))}
-          </div>
-        </Card>
-      </div>
+            </div>
 
-      <div className="space-y-8">
-        {/* PDCA Reviews */}
-        <Card className="p-6 border-border/50 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-editorial font-medium">PDCA Reviews</h3>
-            <span className="bg-primary text-primary-foreground text-xs px-2.5 py-1 rounded-full">
-              {tasks.length} Pending
-            </span>
-          </div>
-          <div className="space-y-4">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex gap-4 p-4 rounded-lg bg-secondary/30 border border-transparent hover:border-border transition-colors"
-              >
-                <div className="mt-1">
-                  {task.stage === 'check' ? (
-                    <CheckCircle2 className="h-5 w-5 text-accent" />
-                  ) : task.stage === 'act' ? (
-                    <Clock className="h-5 w-5 text-primary" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 text-destructive" />
-                  )}
+            <h4 className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-4">
+              Strategic Links
+            </h4>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary transition-colors shadow-sm group">
+                <div className="flex items-center gap-3">
+                  <div className="bg-secondary/50 p-1.5 rounded-sm group-hover:bg-primary/10 transition-colors">
+                    <Settings2 className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <span className="text-sm font-medium">Root Cause Analysis</span>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    {task.expand?.project_id?.title} › {task.stage.toUpperCase()}
-                  </p>
-                  <p className="text-sm font-medium">{task.title}</p>
-                </div>
+                <span className="text-muted-foreground text-xs font-bold">›</span>
               </div>
-            ))}
-          </div>
-          <Button variant="link" className="w-full mt-4 text-sm">
-            View Full Backlog →
-          </Button>
-        </Card>
-
-        {/* Live Feed */}
-        <Card className="p-6 border-border/50 shadow-sm bg-secondary/10">
-          <h3 className="text-xl font-editorial font-medium mb-6">Live Strategy Feed</h3>
-          <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
-            {activities.map((act) => (
-              <div key={act.id} className="relative flex items-start gap-4">
-                <div className="absolute left-0 ml-5 -translate-x-1/2 w-3 h-3 rounded-full bg-background border-2 border-primary/20 z-10" />
-                <Avatar className="h-10 w-10 border-2 border-background z-10 ml-0.5">
-                  <AvatarImage
-                    src={`https://img.usecurling.com/ppl/thumbnail?seed=${act.expand?.user_id?.id}`}
-                  />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 pt-1">
-                  <p className="text-sm leading-relaxed">
-                    <span className="font-medium text-foreground">{act.expand?.user_id?.name}</span>{' '}
-                    {act.content}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    {formatDistanceToNow(new Date(act.created))} ago
-                  </p>
+              <div className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary transition-colors shadow-sm group">
+                <div className="flex items-center gap-3">
+                  <div className="bg-secondary/50 p-1.5 rounded-sm group-hover:bg-primary/10 transition-colors">
+                    <Network className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <span className="text-sm font-medium">Parent OKR: Scalable Growth</span>
                 </div>
+                <span className="text-muted-foreground text-xs font-bold">›</span>
               </div>
-            ))}
+              <div className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary transition-colors shadow-sm group">
+                <div className="flex items-center gap-3">
+                  <div className="bg-secondary/50 p-1.5 rounded-sm group-hover:bg-primary/10 transition-colors">
+                    <History className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                  <span className="text-sm font-medium">Performance History</span>
+                </div>
+                <span className="text-muted-foreground text-xs font-bold">›</span>
+              </div>
+            </div>
           </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
     </div>
   )
 }
