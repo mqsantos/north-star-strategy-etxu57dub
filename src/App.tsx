@@ -9,6 +9,7 @@ import XMatrix from './pages/XMatrix'
 import Objectives from './pages/Objectives'
 import PDCATracker from './pages/PDCATracker'
 import Projects from './pages/Projects'
+import ProjectDetails from './pages/ProjectDetails'
 import KPIHierarchy from './pages/KPIHierarchy'
 import Login from './pages/auth/Login'
 import { AuthProvider } from './hooks/use-auth'
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/okrs" element={<KPIHierarchy />} />
             <Route path="/pdca" element={<PDCATracker />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:id" element={<ProjectDetails />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

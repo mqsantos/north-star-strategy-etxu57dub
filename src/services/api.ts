@@ -7,6 +7,16 @@ export const getKpis = () => pb.collection('kpis').getFullList({ sort: '-created
 export const getProjects = () =>
   pb.collection('projects').getFullList({ expand: 'objective_id', sort: '-created' })
 
+export const getProject = (id: string) =>
+  pb.collection('projects').getOne(id, { expand: 'objective_id' })
+
+export const getProjectTasks = (projectId: string) =>
+  pb.collection('pdca_tasks').getFullList({
+    filter: `project_id = "${projectId}"`,
+    expand: 'owner_id,project_id',
+    sort: 'created',
+  })
+
 export const getTasks = () =>
   pb.collection('pdca_tasks').getFullList({ expand: 'owner_id,project_id', sort: 'created' })
 export const updateTask = (id: string, data: any) => pb.collection('pdca_tasks').update(id, data)
