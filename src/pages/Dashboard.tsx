@@ -6,6 +6,7 @@ import { useRealtime } from '@/hooks/use-realtime'
 import { LineChart, Line, ResponsiveContainer, YAxis } from 'recharts'
 import { ArrowUpRight, CheckCircle2, Clock, AlertCircle } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
 
 const data = [
