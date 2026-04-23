@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import {
   Select,
@@ -9,15 +9,30 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Settings2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { getProjects, getObjectives } from '@/services/api'
 
 // Simplified representation of a complex X-Matrix for UI demonstration
 export default function XMatrix() {
+  const navigate = useNavigate()
+  const [projects, setProjects] = useState<any[]>([])
+  const [objectives, setObjectives] = useState<any[]>([])
+
   const [dots, setDots] = useState<Record<string, number>>({
     '1-1': 1,
     '2-2': 2,
     '3-1': 1,
     '1-3': 2,
   })
+
+  useEffect(() => {
+    getProjects()
+      .then((p) => setProjects(p.slice(0, 3)))
+      .catch(console.error)
+    getObjectives()
+      .then((o) => setObjectives(o.slice(0, 3)))
+      .catch(console.error)
+  }, [])
 
   const toggleDot = (id: string) => {
     setDots((prev) => ({ ...prev, [id]: ((prev[id] || 0) + 1) % 3 }))
@@ -86,21 +101,47 @@ export default function XMatrix() {
           {/* Top (Tactics) */}
           <div className="space-y-6 pb-4">
             <h4 className="text-xs font-semibold text-center text-muted-foreground uppercase tracking-widest">
-              Tactics
+              Tactics (Projects)
             </h4>
             <div className="space-y-4 text-sm">
-              <div className="flex gap-4">
-                <span className="text-muted-foreground italic">01.</span> Optimize Tier 1 supply
-                chain logistics
-              </div>
-              <div className="flex gap-4">
-                <span className="text-muted-foreground italic">02.</span> Implement automated QA
-                frameworks
-              </div>
-              <div className="flex gap-4">
-                <span className="text-muted-foreground italic">03.</span> Transition to Renewables
-                energy source
-              </div>
+              {projects.length > 0 ? (
+                projects.map((p, i) => (
+                  <div
+                    key={p.id}
+                    className="flex gap-4 cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => navigate(`/projects/${p.id}`)}
+                  >
+                    <span className="text-muted-foreground italic">0{i + 1}.</span>{' '}
+                    <span className="truncate max-w-[300px]" title={p.title}>
+                      {p.title}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div
+                    className="flex gap-4 cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => navigate('/projects')}
+                  >
+                    <span className="text-muted-foreground italic">01.</span> Optimize Tier 1 supply
+                    chain logistics
+                  </div>
+                  <div
+                    className="flex gap-4 cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => navigate('/projects')}
+                  >
+                    <span className="text-muted-foreground italic">02.</span> Implement automated QA
+                    frameworks
+                  </div>
+                  <div
+                    className="flex gap-4 cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => navigate('/projects')}
+                  >
+                    <span className="text-muted-foreground italic">03.</span> Transition to
+                    Renewables energy source
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -113,18 +154,53 @@ export default function XMatrix() {
               Annual Objectives
             </h4>
             <div className="space-y-8">
-              <div>
-                <p className="font-medium text-sm">15% Reduction in Carbon Footprint</p>
-                <p className="text-xs text-muted-foreground italic mt-1">Core ESG Target</p>
-              </div>
-              <div>
-                <p className="font-medium text-sm">99.9% Manufacturing Uptime</p>
-                <p className="text-xs text-muted-foreground italic mt-1">Operational Excellence</p>
-              </div>
-              <div>
-                <p className="font-medium text-sm">Expand Market Share by 4%</p>
-                <p className="text-xs text-muted-foreground italic mt-1">Revenue Growth</p>
-              </div>
+              {objectives.length > 0 ? (
+                objectives.map((o, i) => (
+                  <div
+                    key={o.id}
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate('/plan')}
+                  >
+                    <p
+                      className="font-medium text-sm text-primary truncate max-w-[280px]"
+                      title={o.title}
+                    >
+                      {o.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground italic mt-1">
+                      {o.type || 'Annual Goal'}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate('/plan')}
+                  >
+                    <p className="font-medium text-sm text-primary">
+                      15% Reduction in Carbon Footprint
+                    </p>
+                    <p className="text-xs text-muted-foreground italic mt-1">Core ESG Target</p>
+                  </div>
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate('/plan')}
+                  >
+                    <p className="font-medium text-sm text-primary">99.9% Manufacturing Uptime</p>
+                    <p className="text-xs text-muted-foreground italic mt-1">
+                      Operational Excellence
+                    </p>
+                  </div>
+                  <div
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate('/plan')}
+                  >
+                    <p className="font-medium text-sm text-primary">Expand Market Share by 4%</p>
+                    <p className="text-xs text-muted-foreground italic mt-1">Revenue Growth</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -145,7 +221,7 @@ export default function XMatrix() {
                 return (
                   <div
                     key={id}
-                    className="border border-border/30 flex items-center justify-center p-4 cursor-pointer hover:bg-background/50 transition-colors"
+                    className="border border-border/30 flex items-center justify-center p-4 cursor-pointer hover:bg-background/50 transition-colors z-10"
                     onClick={() => toggleDot(id)}
                   >
                     {renderDot(dots[id] || 0)}
@@ -161,22 +237,28 @@ export default function XMatrix() {
               Strategic Targets
             </h4>
             <div className="space-y-6">
-              <div>
-                <p className="text-sm font-medium mb-2">$1.2B Annual Revenue</p>
+              <div className="cursor-pointer group" onClick={() => navigate('/okrs')}>
+                <p className="text-sm font-medium mb-2 group-hover:text-primary transition-colors">
+                  $1.2B Annual Revenue
+                </p>
                 <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-accent w-3/4" />
+                  <div className="h-full bg-accent w-3/4 group-hover:bg-primary transition-colors" />
                 </div>
               </div>
-              <div>
-                <p className="text-sm font-medium mb-2">&lt; 0.5% Defect Rate</p>
+              <div className="cursor-pointer group" onClick={() => navigate('/okrs')}>
+                <p className="text-sm font-medium mb-2 group-hover:text-primary transition-colors">
+                  &lt; 0.5% Defect Rate
+                </p>
                 <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-accent w-full" />
+                  <div className="h-full bg-accent w-full group-hover:bg-primary transition-colors" />
                 </div>
               </div>
-              <div>
-                <p className="text-sm font-medium mb-2">85 Net Promoter Score</p>
+              <div className="cursor-pointer group" onClick={() => navigate('/okrs')}>
+                <p className="text-sm font-medium mb-2 group-hover:text-primary transition-colors">
+                  85 Net Promoter Score
+                </p>
                 <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-2/3" />
+                  <div className="h-full bg-primary w-2/3 opacity-80 group-hover:opacity-100 transition-opacity" />
                 </div>
               </div>
             </div>
@@ -193,14 +275,24 @@ export default function XMatrix() {
               </p>
             </div>
             <div />
-            <div className="bg-secondary/20 p-4 rounded-lg border border-border/50 text-center">
-              <p className="text-sm font-medium">AI-Integrated Production</p>
+            <div
+              className="bg-secondary/20 p-4 rounded-lg border border-border/50 text-center cursor-pointer hover:bg-secondary/40 hover:border-primary/30 transition-all group"
+              onClick={() => navigate('/plan')}
+            >
+              <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                AI-Integrated Production
+              </p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-2">
                 3 Year Horizon
               </p>
             </div>
-            <div className="bg-secondary/20 p-4 rounded-lg border border-border/50 text-center">
-              <p className="text-sm font-medium">Direct-to-Consumer Core</p>
+            <div
+              className="bg-secondary/20 p-4 rounded-lg border border-border/50 text-center cursor-pointer hover:bg-secondary/40 hover:border-primary/30 transition-all group"
+              onClick={() => navigate('/plan')}
+            >
+              <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                Direct-to-Consumer Core
+              </p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-2">
                 5 Year Horizon
               </p>

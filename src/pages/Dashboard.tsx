@@ -3,6 +3,7 @@ import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'rec
 import { BarChart3, Settings2, History, Network } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { useNavigate } from 'react-router-dom'
 
 const chartData = [
   { month: 'Sep 23', actual: 85, plan: 82 },
@@ -89,13 +90,20 @@ const metrics = [
 ]
 
 export default function Dashboard() {
+  const navigate = useNavigate()
+
   return (
     <div className="space-y-6">
       {/* SDI Card */}
-      <Card className="p-8 border-none shadow-sm flex flex-col md:flex-row items-center gap-12 bg-white">
+      <Card
+        className="p-8 border-none shadow-sm flex flex-col md:flex-row items-center gap-12 bg-white cursor-pointer hover:shadow-md transition-shadow group"
+        onClick={() => navigate('/okrs')}
+      >
         <CircularProgress value={82} />
         <div className="flex-1 py-4">
-          <h3 className="text-2xl font-editorial mb-4">Strategy Deployment Index (SDI)</h3>
+          <h3 className="text-2xl font-editorial mb-4 group-hover:text-primary/80 transition-colors">
+            Strategy Deployment Index (SDI)
+          </h3>
           <p className="text-muted-foreground leading-relaxed mb-8 text-[15px]">
             Organizational health remains robust. We've seen a{' '}
             <strong className="text-foreground font-semibold">+4.2% lift</strong> since Q2,
@@ -128,9 +136,15 @@ export default function Dashboard() {
       {/* Metric Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {metrics.map((m, i) => (
-          <Card key={i} className="p-6 border-none shadow-sm bg-white flex flex-col">
+          <Card
+            key={i}
+            className="p-6 border-none shadow-sm bg-white flex flex-col cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all group"
+            onClick={() => navigate('/okrs')}
+          >
             <div className="flex justify-between items-start mb-4">
-              <h4 className="text-[17px] font-editorial">{m.title}</h4>
+              <h4 className="text-[17px] font-editorial group-hover:text-primary/80 transition-colors">
+                {m.title}
+              </h4>
               <span
                 className={`text-[10px] px-2 py-0.5 rounded-[3px] font-bold tracking-wider uppercase ${
                   m.status === 'On Track'
@@ -183,7 +197,7 @@ export default function Dashboard() {
               </div>
               <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
                 <div
-                  className="h-full"
+                  className="h-full transition-all duration-1000"
                   style={{
                     width: `${Math.min(m.progress, 100)}%`,
                     backgroundColor:
@@ -219,9 +233,10 @@ export default function Dashboard() {
             </Button>
             <Button
               size="sm"
+              onClick={() => navigate('/okrs')}
               className="bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase h-8 rounded-sm hover:bg-primary/90"
             >
-              Edit Parameters
+              View in Hierarchy
             </Button>
           </div>
         </div>
@@ -236,7 +251,7 @@ export default function Dashboard() {
                 <div className="w-4 h-0.5 border-t-[2.5px] border-dashed border-muted-foreground/60" />{' '}
                 Strategic Plan
               </div>
-              <div className="ml-auto text-[11px] font-bold tracking-widest uppercase flex items-center gap-1.5 cursor-pointer">
+              <div className="ml-auto text-[11px] font-bold tracking-widest uppercase flex items-center gap-1.5 cursor-pointer hover:text-primary">
                 Last 12 Months <span className="text-[8px] mt-0.5">▼</span>
               </div>
             </div>
@@ -302,32 +317,53 @@ export default function Dashboard() {
               Strategic Links
             </h4>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary transition-colors shadow-sm group">
+              <div
+                className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary hover:shadow-md transition-all shadow-sm group"
+                onClick={() => navigate('/pdca')}
+              >
                 <div className="flex items-center gap-3">
                   <div className="bg-secondary/50 p-1.5 rounded-sm group-hover:bg-primary/10 transition-colors">
                     <Settings2 className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <span className="text-sm font-medium">Root Cause Analysis</span>
+                  <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                    Root Cause Analysis
+                  </span>
                 </div>
-                <span className="text-muted-foreground text-xs font-bold">›</span>
+                <span className="text-muted-foreground text-xs font-bold group-hover:translate-x-1 transition-transform">
+                  ›
+                </span>
               </div>
-              <div className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary transition-colors shadow-sm group">
+              <div
+                className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary hover:shadow-md transition-all shadow-sm group"
+                onClick={() => navigate('/plan')}
+              >
                 <div className="flex items-center gap-3">
                   <div className="bg-secondary/50 p-1.5 rounded-sm group-hover:bg-primary/10 transition-colors">
                     <Network className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <span className="text-sm font-medium">Parent OKR: Scalable Growth</span>
+                  <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                    Parent OKR: Scalable Growth
+                  </span>
                 </div>
-                <span className="text-muted-foreground text-xs font-bold">›</span>
+                <span className="text-muted-foreground text-xs font-bold group-hover:translate-x-1 transition-transform">
+                  ›
+                </span>
               </div>
-              <div className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary transition-colors shadow-sm group">
+              <div
+                className="flex items-center justify-between p-3.5 bg-white border border-border rounded-[4px] cursor-pointer hover:border-primary hover:shadow-md transition-all shadow-sm group"
+                onClick={() => navigate('/matrix')}
+              >
                 <div className="flex items-center gap-3">
                   <div className="bg-secondary/50 p-1.5 rounded-sm group-hover:bg-primary/10 transition-colors">
                     <History className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <span className="text-sm font-medium">Performance History</span>
+                  <span className="text-sm font-medium group-hover:text-primary transition-colors">
+                    Performance History
+                  </span>
                 </div>
-                <span className="text-muted-foreground text-xs font-bold">›</span>
+                <span className="text-muted-foreground text-xs font-bold group-hover:translate-x-1 transition-transform">
+                  ›
+                </span>
               </div>
             </div>
           </div>

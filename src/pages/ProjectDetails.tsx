@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getProject, getProjectTasks, getKpis } from '@/services/api'
 import { useRealtime } from '@/hooks/use-realtime'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Target, AlertCircle, RefreshCcw } from 'lucide-react'
+import pb from '@/lib/pocketbase/client'
 
 export default function ProjectDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [project, setProject] = useState<any>(null)
   const [tasks, setTasks] = useState<any[]>([])
   const [kpis, setKpis] = useState<any[]>([])
@@ -58,14 +60,20 @@ export default function ProjectDetails() {
     <div className="flex flex-col lg:flex-row gap-10 animate-fade-in pb-12">
       <div className="flex-1 space-y-10">
         <div>
-          <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-3">
-            Project Definition • Q4 2023
+          <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+            <Link to="/projects" className="hover:text-primary transition-colors cursor-pointer">
+              Projects
+            </Link>
+            <span>›</span>
+            <span>Q4 2023</span>
           </p>
           <h1 className="text-4xl font-editorial text-primary mb-4 leading-tight">
             {project.title}
           </h1>
           <p className="text-lg font-editorial italic text-muted-foreground">
-            A cross-functional initiative to secure the targeted infrastructure segment.
+            {project.expand?.objective_id
+              ? `Aligned to: ${project.expand.objective_id.title}`
+              : 'A cross-functional initiative to secure the targeted infrastructure segment.'}
           </p>
         </div>
 
@@ -107,8 +115,8 @@ export default function ProjectDetails() {
                 The Ambition
               </p>
               <div className="p-5 border border-border/60 rounded-sm bg-background/50 text-sm leading-relaxed text-primary h-[120px]">
-                {project.ambition ||
-                  project.goal_statement ||
+                {project.goal_statement ||
+                  project.ambition ||
                   'Establish a dominant 12% market share within the segment by Q3.'}
               </div>
             </div>
@@ -161,7 +169,7 @@ export default function ProjectDetails() {
                     Owner
                   </th>
                   <th className="pb-4 font-bold text-[10px] tracking-wider uppercase text-muted-foreground text-right w-24">
-                    Progress
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -186,19 +194,33 @@ export default function ProjectDetails() {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-7 w-7 bg-primary/10">
                             <AvatarImage
-                              src={`https://img.usecurling.com/ppl/thumbnail?seed=${task.owner_id || task.id}`}
+                              src={
+                                task.expand?.owner_id?.avatar
+                                  ? pb.files.getUrl(
+                                      task.expand.owner_id,
+                                      task.expand.owner_id.avatar,
+                                    )
+                                  : `https://img.usecurling.com/ppl/thumbnail?seed=${task.owner_id || task.id}`
+                              }
                             />
                             <AvatarFallback className="text-[10px] font-bold text-primary">
-                              JD
+                              {(task.expand?.owner_id?.name || 'U').charAt(0)}
                             </AvatarFallback>
                           </Avatar>
                           <span className="text-sm font-medium">
-                            {task.expand?.owner_id?.name || 'Jane Doe'}
+                            {task.expand?.owner_id?.name || 'Unassigned'}
                           </span>
                         </div>
                       </td>
-                      <td className="py-5 text-right font-medium text-[15px]">
-                        {task.stage === 'plan' ? '100%' : task.stage === 'do' ? '45%' : '0%'}
+                      <td className="py-5 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 text-[10px] font-bold tracking-widest text-primary hover:bg-primary/10"
+                          onClick={() => navigate('/pdca')}
+                        >
+                          TRACKER
+                        </Button>
                       </td>
                     </tr>
                   ))
@@ -206,6 +228,11 @@ export default function ProjectDetails() {
                   <tr>
                     <td colSpan={4} className="py-10 text-center text-muted-foreground font-medium">
                       No tactical steps defined for this initiative yet.
+                      <div className="mt-4">
+                        <Button variant="outline" size="sm" onClick={() => navigate('/pdca')}>
+                          Create Tasks in Tracker
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -221,7 +248,9 @@ export default function ProjectDetails() {
             <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Linked Metrics
             </h3>
-            <RefreshCcw className="w-3.5 h-3.5 text-muted-foreground" />
+            <Link to="/okrs" title="View in Hierarchy">
+              <RefreshCcw className="w-3.5 h-3.5 text-muted-foreground hover:text-primary transition-colors cursor-pointer" />
+            </Link>
           </div>
 
           <div className="space-y-7">
@@ -230,7 +259,7 @@ export default function ProjectDetails() {
                 <div className="flex justify-between items-end mb-2">
                   <p className="text-sm font-medium text-primary">{kpi.name}</p>
                   <p className={`text-sm font-bold ${idx === 1 ? 'text-red-600' : 'text-primary'}`}>
-                    {idx === 1 ? '$14.2k' : `${kpi.current_value || '4.2'}%`}
+                    {idx === 1 ? '$14.2k' : `${kpi.current_value || '4.2'}${kpi.unit || '%'}`}
                   </p>
                 </div>
                 <div className="w-full h-[2px] bg-[#F4F6F5] my-2 relative">
@@ -242,7 +271,9 @@ export default function ProjectDetails() {
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-[10px] text-muted-foreground">Current</span>
                   <span className="text-[10px] text-primary font-bold">
-                    {idx === 1 ? 'Threshold: $9k' : `Target: ${kpi.target_value || '12'}%`}
+                    {idx === 1
+                      ? 'Threshold: $9k'
+                      : `Target: ${kpi.target_value || '12'}${kpi.unit || '%'}`}
                   </span>
                 </div>
               </div>
@@ -251,8 +282,9 @@ export default function ProjectDetails() {
             <Button
               variant="outline"
               className="w-full text-[10px] font-bold tracking-widest text-primary h-10 mt-6 border-border/60 hover:bg-secondary/30"
+              onClick={() => navigate('/okrs')}
             >
-              CONFIGURE LIVE SYNC
+              VIEW HIERARCHY
             </Button>
           </div>
         </div>

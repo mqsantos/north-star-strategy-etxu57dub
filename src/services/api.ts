@@ -22,5 +22,7 @@ export const getTasks = () =>
 export const updateTask = (id: string, data: any) => pb.collection('pdca_tasks').update(id, data)
 export const createTask = (data: any) => pb.collection('pdca_tasks').create(data)
 
+export const createProject = (data: any) => pb.collection('projects').create(data)
+
 export const getActivities = () =>
   pb.collection('activities').getFullList({ expand: 'user_id', sort: '-created', limit: 10 })

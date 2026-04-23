@@ -12,6 +12,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Link } from 'react-router-dom'
+import pb from '@/lib/pocketbase/client'
 
 const STAGES = [
   { id: 'plan', label: 'Plan' },
@@ -24,8 +26,12 @@ export default function PDCATracker() {
   const [tasks, setTasks] = useState<any[]>([])
 
   const loadData = async () => {
-    const res = await getTasks()
-    setTasks(res)
+    try {
+      const res = await getTasks()
+      setTasks(res)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   useEffect(() => {
@@ -169,9 +175,25 @@ export default function PDCATracker() {
                     />
                     <div className="pl-1 flex flex-col min-h-[100px]">
                       <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-bold mb-3 flex items-center gap-1.5">
-                        <span>{task.expand?.project_id?.title?.split(':')[0] || 'EXPANSION'}</span>
+                        {task.expand?.project_id ? (
+                          <Link
+                            to={`/projects/${task.expand.project_id.id}`}
+                            className="hover:text-primary transition-colors cursor-pointer truncate max-w-[120px]"
+                            title={task.expand.project_id.title}
+                          >
+                            {task.expand.project_id.title.split(':')[0] ||
+                              task.expand.project_id.title}
+                          </Link>
+                        ) : (
+                          <span>EXPANSION</span>
+                        )}
                         <span className="text-border">›</span>
-                        <span>MARKET SHARE KPI</span>
+                        <Link
+                          to="/okrs"
+                          className="hover:text-primary transition-colors cursor-pointer truncate max-w-[100px]"
+                        >
+                          MARKET KPI
+                        </Link>
                       </p>
                       <h4 className="text-[17px] font-editorial font-medium leading-snug mb-6 text-primary group-hover:text-primary/80 transition-colors flex-1">
                         {task.title}
@@ -179,9 +201,15 @@ export default function PDCATracker() {
                       <div className="flex justify-between items-center mt-auto">
                         <Avatar className="h-7 w-7 ring-2 ring-white shadow-sm">
                           <AvatarImage
-                            src={`https://img.usecurling.com/ppl/thumbnail?seed=${task.owner_id || task.id}`}
+                            src={
+                              task.expand?.owner_id?.avatar
+                                ? pb.files.getUrl(task.expand.owner_id, task.expand.owner_id.avatar)
+                                : `https://img.usecurling.com/ppl/thumbnail?seed=${task.owner_id || task.id}`
+                            }
                           />
-                          <AvatarFallback>U</AvatarFallback>
+                          <AvatarFallback>
+                            {(task.expand?.owner_id?.name || 'U').charAt(0)}
+                          </AvatarFallback>
                         </Avatar>
                         {renderBadge(task)}
                       </div>

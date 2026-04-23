@@ -1,7 +1,10 @@
 import { Card } from '@/components/ui/card'
 import { Plus } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 export default function KPIHierarchy() {
+  const navigate = useNavigate()
+
   return (
     <div className="h-[calc(100vh-6rem)] flex flex-col relative animate-fade-in bg-white border border-border mt-2 shadow-sm">
       {/* Map View Area */}
@@ -9,12 +12,17 @@ export default function KPIHierarchy() {
         <div className="min-w-[1000px] flex items-start gap-[80px] pt-16 pl-12 pb-24">
           {/* L0 Column */}
           <div className="relative">
-            <Card className="w-[280px] p-8 border border-border/60 shadow-sm bg-[#FAFAFA] relative z-10 h-[340px] flex flex-col justify-between">
+            <Card
+              className="w-[280px] p-8 border border-border/60 shadow-sm bg-[#FAFAFA] relative z-10 h-[340px] flex flex-col justify-between cursor-pointer hover:border-primary/40 hover:shadow-md transition-all group"
+              onClick={() => navigate('/plan')}
+            >
               <div>
                 <p className="text-[10px] font-bold tracking-widest uppercase mb-6 text-primary">
                   Level 0
                 </p>
-                <h3 className="text-2xl font-editorial mb-4">Sustainable Enterprise Value</h3>
+                <h3 className="text-2xl font-editorial mb-4 group-hover:text-primary/80 transition-colors">
+                  Sustainable Enterprise Value
+                </h3>
                 <p className="text-[13px] text-muted-foreground leading-relaxed">
                   Core objective for FY24 growth and operational stability.
                 </p>
@@ -53,11 +61,16 @@ export default function KPIHierarchy() {
 
           {/* L1 Column */}
           <div className="flex flex-col gap-8 relative mt-[-20px]">
-            <Card className="w-[250px] p-6 border border-border/60 shadow-sm bg-white relative z-10">
+            <Card
+              className="w-[250px] p-6 border border-border/60 shadow-sm bg-white relative z-10 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all group"
+              onClick={() => navigate('/plan')}
+            >
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-4">
                 Revenue & Growth
               </p>
-              <h4 className="text-[15px] font-bold mb-6 text-primary">Net Revenue Retention</h4>
+              <h4 className="text-[15px] font-bold mb-6 text-primary group-hover:text-primary/80 transition-colors">
+                Net Revenue Retention
+              </h4>
               <div className="flex items-end gap-3">
                 <span className="text-2xl font-light">112%</span>
                 <span className="text-[10px] font-bold text-[#3E5C3E] uppercase pb-1 tracking-widest">
@@ -66,11 +79,16 @@ export default function KPIHierarchy() {
               </div>
             </Card>
 
-            <Card className="w-[250px] p-6 border border-border/60 shadow-sm bg-white relative z-10 mt-4">
+            <Card
+              className="w-[250px] p-6 border border-border/60 shadow-sm bg-white relative z-10 mt-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all group"
+              onClick={() => navigate('/plan')}
+            >
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-4">
                 Efficiency
               </p>
-              <h4 className="text-[15px] font-bold mb-6 text-primary">OpEx / Revenue Ratio</h4>
+              <h4 className="text-[15px] font-bold mb-6 text-primary group-hover:text-primary/80 transition-colors">
+                OpEx / Revenue Ratio
+              </h4>
               <div className="flex items-end gap-3">
                 <span className="text-2xl font-light">42.8%</span>
                 <span className="text-[10px] font-bold text-destructive uppercase pb-1 tracking-widest">
@@ -79,12 +97,17 @@ export default function KPIHierarchy() {
               </div>
             </Card>
 
-            <Card className="w-[250px] p-6 border border-border/60 shadow-sm bg-white relative z-10 mt-4">
+            <Card
+              className="w-[250px] p-6 border border-border/60 shadow-sm bg-white relative z-10 mt-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all group"
+              onClick={() => navigate('/plan')}
+            >
               <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-border/80" />
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-4">
                 Future Value
               </p>
-              <h4 className="text-[15px] font-bold mb-6 text-primary">R&D Velocity Index</h4>
+              <h4 className="text-[15px] font-bold mb-6 text-primary group-hover:text-primary/80 transition-colors">
+                R&D Velocity Index
+              </h4>
               <div className="flex items-end gap-3">
                 <span className="text-2xl font-light">7.4</span>
                 <span className="text-[10px] font-bold text-[#A07A40] uppercase pb-1 tracking-widest">
@@ -129,11 +152,14 @@ export default function KPIHierarchy() {
 
           {/* L2 Column */}
           <div className="flex flex-col gap-6 relative mt-[60px]">
-            <Card className="w-[250px] p-6 border border-border/60 shadow-sm bg-[#FAFAFA] relative z-10">
+            <Card
+              className="w-[250px] p-6 border border-border/60 shadow-sm bg-[#FAFAFA] relative z-10 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all group"
+              onClick={() => navigate('/projects')}
+            >
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-4 flex items-center gap-2">
                 <span className="text-primary text-sm">✣</span> Marketing
               </p>
-              <h4 className="text-[14px] font-bold mb-6 text-primary leading-tight">
+              <h4 className="text-[14px] font-bold mb-6 text-primary leading-tight group-hover:text-primary/80 transition-colors">
                 MQL Conversion
                 <br />
                 Rate
@@ -146,11 +172,14 @@ export default function KPIHierarchy() {
               </div>
             </Card>
 
-            <Card className="w-[250px] p-6 border border-border/60 shadow-sm bg-[#FAFAFA] relative z-10 mt-2">
+            <Card
+              className="w-[250px] p-6 border border-border/60 shadow-sm bg-[#FAFAFA] relative z-10 mt-2 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all group"
+              onClick={() => navigate('/projects')}
+            >
               <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-4 flex items-center gap-2">
                 <span className="text-primary text-sm">🏛</span> Sales EX
               </p>
-              <h4 className="text-[14px] font-bold mb-6 text-primary leading-tight">
+              <h4 className="text-[14px] font-bold mb-6 text-primary leading-tight group-hover:text-primary/80 transition-colors">
                 Average Deal
                 <br />
                 Cycle
@@ -180,11 +209,14 @@ export default function KPIHierarchy() {
 
           {/* L3 Column (Add node) */}
           <div className="flex flex-col relative mt-[230px]">
-            <Card className="w-[240px] p-6 border border-dashed border-[#D1D5DB] shadow-sm bg-white relative z-10 rounded-b-none text-center group cursor-pointer hover:bg-secondary/20 transition-colors h-[140px] flex flex-col items-center justify-center">
+            <Card
+              className="w-[240px] p-6 border border-dashed border-[#D1D5DB] shadow-sm bg-white relative z-10 rounded-b-none text-center group cursor-pointer hover:bg-secondary/20 transition-colors h-[140px] flex flex-col items-center justify-center"
+              onClick={() => navigate('/projects')}
+            >
               <p className="text-[10px] text-primary/60 uppercase tracking-widest mb-1 flex items-center gap-2 justify-center font-bold">
                 <Plus className="h-3 w-3" /> Add
               </p>
-              <p className="text-[11px] text-primary/80 uppercase tracking-widest font-bold">
+              <p className="text-[11px] text-primary/80 uppercase tracking-widest font-bold group-hover:text-primary transition-colors">
                 Contributing
                 <br />
                 KPI
