@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-22T23:49:35.601Z",
+  "generatedAt": "2026-04-23T10:01:34.740Z",
   "collections": [
     {
       "name": "users",
@@ -29,14 +29,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": [
@@ -72,7 +77,10 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["breakthrough", "annual"]
+          "selectValues": [
+            "breakthrough",
+            "annual"
+          ]
         },
         {
           "name": "horizon",
@@ -85,7 +93,11 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["on_track", "at_risk", "completed"]
+          "selectValues": [
+            "on_track",
+            "at_risk",
+            "completed"
+          ]
         },
         {
           "name": "progress",
@@ -98,14 +110,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -157,14 +174,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "parent_kpi",
@@ -210,7 +232,11 @@
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["draft", "active", "completed"]
+          "selectValues": [
+            "draft",
+            "active",
+            "completed"
+          ]
         },
         {
           "name": "objective_id",
@@ -224,14 +250,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         },
         {
           "name": "specific_impact",
@@ -282,14 +313,23 @@
           "type": "select",
           "required": true,
           "system": false,
-          "selectValues": ["plan", "do", "check", "act"]
+          "selectValues": [
+            "plan",
+            "do",
+            "check",
+            "act"
+          ]
         },
         {
           "name": "priority",
           "type": "select",
           "required": false,
           "system": false,
-          "selectValues": ["low", "medium", "high"]
+          "selectValues": [
+            "low",
+            "medium",
+            "high"
+          ]
         },
         {
           "name": "project_id",
@@ -310,14 +350,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
@@ -357,14 +402,19 @@
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate"]
+          "autodateTriggers": [
+            "onCreate"
+          ]
         },
         {
           "name": "updated",
           "type": "autodate",
           "required": false,
           "system": false,
-          "autodateTriggers": ["onCreate", "onUpdate"]
+          "autodateTriggers": [
+            "onCreate",
+            "onUpdate"
+          ]
         }
       ],
       "indexes": []
